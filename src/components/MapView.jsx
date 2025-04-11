@@ -1,13 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Alert, Animated } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Animated } from "react-native";
 import { WebView } from "react-native-webview";
 import geoData from "../data/geoData.json";
-
 
 const MapView = ({ navigation }) => {
   const webViewRef = useRef(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
   const slideAnim = useRef(new Animated.Value(300)).current;
+
   const mapHtml = `
   <!DOCTYPE html>
   <html>
@@ -35,23 +35,22 @@ const MapView = ({ navigation }) => {
       var geoJsonLayer;
 
       function onEachFeature(feature, layer) {
-  if (feature.properties && feature.properties.name) {
-    layer.on('click', function () {
-      const detail = {
-        id: feature.properties.id,
-        name: feature.properties.name,
-        keterangan: feature.properties.keterangan,
-        persentase: feature.properties.persentase
-      };
-      window.ReactNativeWebView.postMessage(JSON.stringify(detail));
-    });
-  }
-}
+        if (feature.properties && feature.properties.name) {
+          layer.on('click', function () {
+            const detail = {
+              id: feature.properties.id,
+              name: feature.properties.name,
+              keterangan: feature.properties.keterangan,
+              persentase: feature.properties.persentase
+            };
+            window.ReactNativeWebView.postMessage(JSON.stringify(detail));
+          });
+        }
+      }
 
       window.addEventListener("message", function(event) {
         try {
           var geojsonData = JSON.parse(event.data);
-          console.log("GeoJSON received:", geojsonData);
           if (geoJsonLayer) {
             map.removeLayer(geoJsonLayer);
           }
@@ -60,15 +59,11 @@ const MapView = ({ navigation }) => {
             onEachFeature: onEachFeature,
             style: function(feature) {
               const p = feature.properties.persentase;
-              let fillColor = '#4daf4a'; // Hijau: 0%
+              let fillColor = '#4daf4a';
 
-              if (p > 50) {
-                fillColor = '#e31a1c'; // Merah
-              } else if (p > 30) {
-                fillColor = '#ff7f00'; // Oranye
-              } else if (p > 0) {
-                fillColor = '#ffff00'; // Kuning
-              }
+              if (p > 50) fillColor = '#e31a1c';
+              else if (p > 30) fillColor = '#ff7f00';
+              else if (p > 0) fillColor = '#ffff00';
 
               return {
                 fillColor: fillColor,
@@ -93,36 +88,39 @@ const MapView = ({ navigation }) => {
 
   const sendGeoJsonToWebView = () => {
     if (webViewRef.current) {
-      const geoJsonString = JSON.stringify(geoData); // stringify pertama
+      const geoJsonString = JSON.stringify(geoData);
       const script = `
-      (function() {
-        try {
-          window.postMessage(${JSON.stringify(geoJsonString)}, '*'); // stringify kedua
-        } catch(e) {
-          console.error('Error sending GeoJSON:', e);
-        }
-      })();
-      true;
-    `;
+        (function() {
+          try {
+            window.postMessage(${JSON.stringify(geoJsonString)}, '*');
+          } catch(e) {
+            console.error('Error sending GeoJSON:', e);
+          }
+        })();
+        true;
+      `;
       webViewRef.current.injectJavaScript(script);
     }
   };
 
-
-  // ❌ Tidak perlu dipanggil di useEffect
-  // useEffect(() => {
-  //   sendGeoJsonToWebView();
-  // }, []);
-
   const handleMessage = (event) => {
     try {
       const detail = JSON.parse(event.nativeEvent.data);
-      navigation.navigate('DetailWilayah', detail);
+      setSelectedInfo(detail); // Set info dulu, lalu animasi muncul
     } catch (e) {
       console.error("Gagal parsing data detail:", e);
     }
   };
-  
+
+  useEffect(() => {
+    if (selectedInfo) {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [selectedInfo]);
 
   const closeInfoPanel = () => {
     Animated.timing(slideAnim, {

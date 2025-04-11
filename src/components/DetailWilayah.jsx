@@ -1,8 +1,23 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import geoData from '../data/geoData.json';
 
 const DetailWilayah = ({ route }) => {
-  const { id, name, keterangan, persentase } = route.params;
+  const { id } = route.params;
+
+  const wilayah = geoData.features.find(
+    (feature) => feature.properties.id === id
+  );
+
+  if (!wilayah) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Data wilayah tidak ditemukan.</Text>
+      </View>
+    );
+  }
+
+  const { name, keterangan, persentase } = wilayah.properties;
 
   return (
     <View style={styles.container}>
@@ -18,11 +33,12 @@ const DetailWilayah = ({ route }) => {
       <Text style={styles.text}>{keterangan || "Tidak ada keterangan."}</Text>
 
       <Text style={styles.label}>Persentase Keluarga Berisiko:</Text>
-      <Text style={styles.text}>{persentase ?? "Data tidak tersedia"}%</Text>
+      <Text style={styles.text}>
+        {persentase != null ? `${persentase}%` : "Data tidak tersedia"}
+      </Text>
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -45,19 +61,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginTop: 4,
-  },
-  button: {
-    marginTop: 40,
-    backgroundColor: '#4a90e2',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignSelf: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 

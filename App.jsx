@@ -6,7 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SplashWrapper from './src/components/SplashWrapper';
 import LandingPage from './src/components/LandingPage';
 import LoginScreen from './src/components/LoginScreen';
-import RegisterScreen from './src/components/RegisterScreen'; // ✅ Tambahkan ini
 import DetailWilayah from './src/components/DetailWilayah';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 
@@ -50,11 +49,6 @@ const App = () => {
             name="Login"
             component={LoginScreen}
             options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ title: 'Daftar Akun Masyarakat' }}
           />
           <Stack.Screen
             name="Main"

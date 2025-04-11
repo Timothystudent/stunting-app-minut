@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Animated } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import DropDownPicker from 'react-native-dropdown-picker';
 
 const { width } = Dimensions.get('window');
 
@@ -27,14 +26,6 @@ const LandingPage = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const indicatorAnims = useRef(slides.map((_, i) => new Animated.Value(i === 0 ? 1 : 0))).current;
 
-  // Dropdown state
-  const [open, setOpen] = useState(false);
-  const [role, setRole] = useState(null);
-  const [items, setItems] = useState([
-    { label: 'Masyarakat', value: 'masyarakat' },
-    { label: 'Admin / BKKBN', value: 'admin' },
-  ]);
-
   useEffect(() => {
     indicatorAnims.forEach((anim, index) => {
       Animated.timing(anim, {
@@ -46,14 +37,8 @@ const LandingPage = ({ navigation }) => {
   }, [currentPage]);
 
   const handleContinue = () => {
-    if (role === 'masyarakat') {
-      navigation.navigate('Register'); // arahkan ke halaman register
-    } else if (role === 'admin') {
-      navigation.navigate('Login'); // tetap ke login
-    }
+    navigation.navigate('Login'); // langsung ke login
   };
-  
-  
 
   return (
     <View style={styles.container}>
@@ -68,34 +53,14 @@ const LandingPage = ({ navigation }) => {
             <Text style={styles.description}>{slide.text}</Text>
 
             {index === slides.length - 1 && (
-              <>
-                <View style={{ zIndex: 10, marginBottom: 20, width: '80%' }}>
-                  <DropDownPicker
-                    open={open}
-                    value={role}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setRole}
-                    setItems={setItems}
-                    placeholder="Pilih Peran Anda"
-                    style={{ borderColor: '#89CFF0' }}
-                    dropDownContainerStyle={{ borderColor: '#89CFF0' }}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: role ? '#89CFF0' : '#ccc' }]}
-                  onPress={handleContinue}
-                  disabled={!role}
-                >
-                  <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
-              </>
+              <TouchableOpacity style={styles.button} onPress={handleContinue}>
+                <Text style={styles.buttonText}>Mulai</Text>
+              </TouchableOpacity>
             )}
           </View>
         ))}
       </PagerView>
 
-      {/* Indikator dengan animasi */}
       <View style={styles.indicatorContainer}>
         {slides.map((_, index) => {
           const width = indicatorAnims[index].interpolate({
@@ -150,6 +115,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 50,
     borderRadius: 40,
+    backgroundColor: '#89CFF0',
   },
   buttonText: {
     color: '#fff',

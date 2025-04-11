@@ -7,7 +7,7 @@
         "id": "03",
         "name": "Kecamatan Airmadidi",
         "keterangan": "Wilayah ini memiliki jumlah penduduk terbanyak di Minahasa Utara.",
-        "persentase": "0"
+        "persentase": "45.7"
       },
       "geometry": {
         "type": "Polygon",
@@ -1154,7 +1154,7 @@
       "properties": {
         "id": "04",
         "name": "Kecamatan Wori",
-        "keterangan": "Wilayah yang berkembang pesat secara infrastruktur.",
+        "keterangan": "Wilayah ini memiliki persentase keluarga yang berisiko stunting yang lumayan tinggi.",
         "persentase":"46.6"
       },
       "geometry": {

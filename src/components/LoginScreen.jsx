@@ -48,23 +48,6 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>Sign in</Text>
       </TouchableOpacity>
 
-      <Text style={styles.or}>- Or sign in with -</Text>
-
-      <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
-          <Text style={styles.socialText}>G</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Text style={styles.socialText}>f</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Text style={styles.socialText}>t</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.signup}>
-        Don’t have an account? <Text style={styles.signupLink}>Sign up</Text>
-      </Text>
     </View>
   );
 };
