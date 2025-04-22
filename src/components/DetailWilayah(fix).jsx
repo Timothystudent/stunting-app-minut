@@ -1,24 +1,40 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import geoData from '../data/geoData.json';
 
 const DetailWilayah = ({ route }) => {
-  const { info } = route.params;
+  const { id } = route.params;
 
-  // Debugging
-  console.log('Info dari route:', info);
+  const wilayah = geoData.features.find(
+    (feature) => feature.properties.id === id
+  );
+
+  if (!wilayah) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Data wilayah tidak ditemukan.</Text>
+      </View>
+    );
+  }
+
+  const { name, keterangan, persentase } = wilayah.properties;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tentang Wilayah</Text>
+
       <Text style={styles.label}>ID:</Text>
-      <Text style={styles.text}>{info.id}</Text>
+      <Text style={styles.text}>{id}</Text>
+
       <Text style={styles.label}>Nama Wilayah:</Text>
-      <Text style={styles.text}>{info.name || 'Tidak ada nama'}</Text>
+      <Text style={styles.text}>{name}</Text>
+
       <Text style={styles.label}>Keterangan:</Text>
-      <Text style={styles.text}>{info.keterangan || 'Tidak ada keterangan'}</Text>
+      <Text style={styles.text}>{keterangan || "Tidak ada keterangan."}</Text>
+
       <Text style={styles.label}>Persentase Keluarga Berisiko:</Text>
       <Text style={styles.text}>
-        {info.persentase != null ? `${parseFloat(info.persentase)}%` : 'Data tidak tersedia'}
+        {persentase != null ? `${persentase}%` : "Data tidak tersedia"}
       </Text>
     </View>
   );

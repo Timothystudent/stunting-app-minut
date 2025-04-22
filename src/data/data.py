@@ -1,54 +1,36 @@
- const mapHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-        #map { height: 100vh; margin: 0; padding: 0; }
-      </style>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    </head>
-    <body>
-      <div id="map"></div>
-      <script>
-        const map = L.map('map').setView([-1.5, 124.5], 9);
-        L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=YOUR_MAPTILER_KEY', {
-          attribution: '&copy; MapTiler & OpenStreetMap contributors'
-        }).addTo(map);
+import pandas as pd
 
-        document.addEventListener("message", function(event) {
-          const geojson = JSON.parse(event.data);
-          const data = JSON.parse(geojson);
+# Buka file Excel
+file_path = "/content/data-keluarga-berisiko-stunting-minut.xlsx"  # ganti sesuai nama file
+df = pd.read_excel(file_path)
 
-          function getColor(percent) {
-            if (percent === 0) return '#4CAF50';
-            if (percent > 0 && percent <= 30) return '#FFEB3B';
-            if (percent > 30 && percent <= 50) return '#FF9800';
-            if (percent > 50) return '#F44336';
-            return '#9E9E9E';
-          }
+# Daftar kolom faktor risiko
+faktor_risiko = [
+    'sumber_air_layak_tidak',
+    'jamban_layak_tidak',
+    'terlalu_muda',
+    'terlalu_tua',
+    'terlalu_dekat',
+    'terlalu_banyak'
+]
 
-          L.geoJSON(data, {
-            style: feature => ({
-              fillColor: getColor(feature.properties.persentase),
-              weight: 1,
-              color: '#333',
-              fillOpacity: 0.6
-            }),
-            onEachFeature: (feature, layer) => {
-              layer.on('click', () => {
-                const info = {
-                  name: feature.properties.name || 'Tidak diketahui',
-                  keterangan: "Persentase keluarga berisiko: " + feature.properties.persentase + "%"
-                };
-                window.ReactNativeWebView.postMessage(JSON.stringify(info));
-              });
-            }
-          }).addTo(map);
-        });
-      </script>
-    </body>
-    </html>
-  `;
+# Pastikan kolom faktor risiko bertipe numerik
+for kolom in faktor_risiko:
+    df[kolom] = pd.to_numeric(df[kolom], errors='coerce')
+
+# Tandai apakah keluarga berisiko
+df['berisiko'] = df[faktor_risiko].sum(axis=1) > 0
+
+# Hitung total keluarga dan keluarga berisiko per kecamatan
+hasil_per_kecamatan = df.groupby('namakecamatan').agg(
+    total_keluarga=('berisiko', 'count'),
+    jumlah_berisiko=('berisiko', 'sum')
+)
+
+# Hitung persentase keluarga berisiko
+hasil_per_kecamatan['persentase_berisiko'] = (
+    hasil_per_kecamatan['jumlah_berisiko'] / hasil_per_kecamatan['total_keluarga'] * 100
+)
+
+# Tampilkan hasil
+print(hasil_per_kecamatan[['total_keluarga', 'jumlah_berisiko', 'persentase_berisiko']].round(2))

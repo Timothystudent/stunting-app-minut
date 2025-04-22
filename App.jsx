@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import SplashWrapper from './src/components/SplashWrapper';
 import LandingPage from './src/components/LandingPage';
@@ -9,7 +9,7 @@ import LoginScreen from './src/components/LoginScreen';
 import DetailWilayah from './src/components/DetailWilayah';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (

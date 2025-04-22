@@ -6,8 +6,6 @@ import geoData from "../data/geoData.json";
 const MapView = ({ navigation }) => {
   const webViewRef = useRef(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   const mapHtml = `
@@ -29,7 +27,7 @@ const MapView = ({ navigation }) => {
       var map = L.map('map').setView([-6.1754, 106.8201], 10);
 
       L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=ZhD5en5bTNPf7VzQe9L9', {
-        attribution: '© MapTiler & OpenStreetMap',
+        attribution: '&copy; MapTiler & OpenStreetMap',
         tileSize: 512,
         zoomOffset: -1,
       }).addTo(map);
@@ -60,7 +58,7 @@ const MapView = ({ navigation }) => {
           geoJsonLayer = L.geoJSON(geojsonData, {
             onEachFeature: onEachFeature,
             style: function(feature) {
-              const p = parseFloat(feature.properties.persentase);
+              const p = feature.properties.persentase;
               let fillColor = '#4daf4a';
 
               if (p > 50) fillColor = '#e31a1c';
@@ -78,11 +76,7 @@ const MapView = ({ navigation }) => {
             }
           }).addTo(map);
 
-          try {
-            map.fitBounds(geoJsonLayer.getBounds());
-          } catch (e) {
-            console.error("Error fitting bounds:", e);
-          }
+          map.fitBounds(geoJsonLayer.getBounds());
         } catch (e) {
           console.error("GeoJSON error:", e);
         }
@@ -94,7 +88,6 @@ const MapView = ({ navigation }) => {
 
   const sendGeoJsonToWebView = () => {
     if (webViewRef.current) {
-      console.log('Mengirim GeoJSON ke WebView:', geoData);
       const geoJsonString = JSON.stringify(geoData);
       const script = `
         (function() {
@@ -107,22 +100,15 @@ const MapView = ({ navigation }) => {
         true;
       `;
       webViewRef.current.injectJavaScript(script);
-      setIsLoading(false);
-    } else {
-      console.error('WebView ref tidak tersedia');
-      setError('Gagal memuat peta');
-      setIsLoading(false);
     }
   };
 
   const handleMessage = (event) => {
     try {
       const detail = JSON.parse(event.nativeEvent.data);
-      console.log('Data diterima dari WebView:', detail);
-      setSelectedInfo(detail);
+      setSelectedInfo(detail); // Set info dulu, lalu animasi muncul
     } catch (e) {
       console.error("Gagal parsing data detail:", e);
-      setError('Gagal memuat data wilayah');
     }
   };
 
@@ -147,23 +133,12 @@ const MapView = ({ navigation }) => {
   };
 
   const goToDetailPage = () => {
-    console.log('Navigasi ke DetailWilayah dengan info:', selectedInfo);
     closeInfoPanel();
     navigation.navigate('DetailWilayah', { info: selectedInfo });
   };
 
   return (
     <View style={styles.container}>
-      {isLoading && (
-        <View style={styles.loadingContainer}>
-          <Text>Memuat peta...</Text>
-        </View>
-      )}
-      {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
       <WebView
         ref={webViewRef}
         source={{ html: mapHtml }}
@@ -174,6 +149,7 @@ const MapView = ({ navigation }) => {
         onLoadEnd={sendGeoJsonToWebView}
         onMessage={handleMessage}
       />
+
       {selectedInfo && (
         <Animated.View style={[styles.infoPanel, { transform: [{ translateY: slideAnim }] }]}>
           <Text style={styles.infoTitle}>{selectedInfo.name}</Text>
@@ -195,29 +171,6 @@ const MapView = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   webview: { flex: 1 },
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-  },
-  errorContainer: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: '#ffcccc',
-    padding: 10,
-    borderRadius: 8,
-  },
-  errorText: {
-    color: '#cc0000',
-    textAlign: 'center',
-  },
   infoPanel: {
     position: 'absolute',
     bottom: 80,
