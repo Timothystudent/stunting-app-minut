@@ -2,6 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Animated } from "react-native";
 import { WebView } from "react-native-webview";
 import geoData from "../data/geoData.json";
+import { db } from '../firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+
 
 const MapView = ({ navigation }) => {
   const webViewRef = useRef(null);

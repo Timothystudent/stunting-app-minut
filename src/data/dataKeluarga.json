@@ -1,0 +1,53 @@
+{
+    "Airmadidi Atas": [
+      {
+        "nama": "Keluarga A1",
+        "koordinat": "1.234, 124.567",
+        "muda": true,
+        "tua": false,
+        "dekat": false,
+        "banyak": true,
+        "air": true,
+        "sanitasi": false,
+        "intervensi": "Sudah"
+      },
+      {
+        "nama": "Keluarga A2",
+        "koordinat": "1.235, 123.567",
+        "muda": true,
+        "tua": false,
+        "dekat": false,
+        "banyak": true,
+        "air": true,
+        "sanitasi": false,
+        "intervensi": "Sudah"
+      }
+    ],
+    "Airmadidi Bawah": [
+      {
+        "nama": "Keluarga B1",
+        "koordinat": "1.987, 124.888",
+        "muda": false,
+        "tua": true,
+        "dekat": true,
+        "banyak": false,
+        "air": false,
+        "sanitasi": true,
+        "intervensi": "Belum"
+      }
+    ],
+    "Dimembe": [
+      {
+        "nama": "Keluarga C1",
+        "koordinat": "1.987, 124.888",
+        "muda": false,
+        "tua": true,
+        "dekat": true,
+        "banyak": false,
+        "air": false,
+        "sanitasi": true,
+        "intervensi": "Belum"
+      }
+    ]
+  }
+  

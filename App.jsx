@@ -8,6 +8,8 @@ import LandingPage from './src/components/LandingPage';
 import LoginScreen from './src/components/LoginScreen';
 import DetailWilayah from './src/components/DetailWilayah';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
+import DaftarKelurahanScreen from './src/components/DaftarKelurahanScreen';
+import DaftarKeluargaScreen from './src/components/DaftarKeluargaScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +62,16 @@ const App = () => {
             component={DetailWilayah}
             options={{ title: 'Detail Wilayah' }}
           />
+
+          <Stack.Screen
+            name="DaftarKelurahanScreen"
+            component={DaftarKelurahanScreen}
+          />
+            <Stack.Screen 
+            name="DaftarKeluargaScreen" 
+            component={DaftarKeluargaScreen} 
+            />
+
         </Stack.Navigator>
       </NavigationContainer>
     </>

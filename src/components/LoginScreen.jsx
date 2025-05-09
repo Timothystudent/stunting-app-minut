@@ -9,15 +9,30 @@ import {
 } from 'react-native';
 
 const LoginScreen = ({ navigation }) => {
+  const [role, setRole] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    if (email && password) {
+  const handleRoleSelect = (selectedRole) => {
+    if (selectedRole === 'masyarakat') {
+      // Simpan role ke params saat navigate
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Main' }],
+        routes: [{ name: 'Main', params: { role: selectedRole } }],
       });
+    } else {
+      setRole(selectedRole);
+    }
+  };
+
+  const handleLogin = () => {
+    if (email && password) {
+      if (role === 'bkkbn' || role === 'admin') {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main', params: { role } }],
+        });
+      }
     } else {
       alert('Email dan password harus diisi.');
     }
@@ -26,28 +41,49 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/bkkbn.png')} style={styles.logo} />
-      <Text style={styles.title}>Login to your Account</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+      {!role ? (
+        <>
+          <Text style={styles.title}>Pilih Akses Masuk</Text>
+          <TouchableOpacity style={styles.button} onPress={() => handleRoleSelect('masyarakat')}>
+            <Text style={styles.buttonText}>Masuk sebagai Masyarakat</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => handleRoleSelect('bkkbn')}>
+            <Text style={styles.buttonText}>Masuk sebagai BKKBN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => handleRoleSelect('admin')}>
+            <Text style={styles.buttonText}>Masuk sebagai Admin</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <>
+          <Text style={styles.title}>Login sebagai {role.toUpperCase()}</Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Sign in</Text>
-      </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setRole(null)}>
+            <Text style={styles.signup}>Kembali ke pemilihan peran</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
@@ -67,8 +103,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     textAlign: 'center',
     marginBottom: 30,
   },
@@ -85,42 +121,17 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   buttonText: {
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
   },
-  or: {
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#888',
-  },
-  socialContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 20,
-  },
-  socialButton: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  socialText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   signup: {
     textAlign: 'center',
-    color: '#888',
-  },
-  signupLink: {
     color: '#0047AB',
-    fontWeight: '600',
+    marginTop: 12,
   },
 });
 
